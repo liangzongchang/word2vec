@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import word2vec
 import jieba
 from gensim.models import word2vec
 import gensim
@@ -48,13 +47,17 @@ def model_train(train_file_name, save_model_file):  # model_file_name为训练�
     # 模型训练，生成词向量
     logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
     sentences = word2vec.Text8Corpus(train_file_name)  # 加载语料
-    model = word2vec.Word2Vec(sentences, min_count=2,size=300)  # 训练skip-gram模型; 默认window=5
+    model = word2vec.Word2Vec(sentences, size=400,window=5,min_count=5,workers=4)  # 训练skip-gram模型; 默认window=5
+    #model.save('jinyong')
     model.wv.save_word2vec_format(save_model_file + ".bin", binary=True)   # 以二进制类型保存模型以便重用
     return model,str(save_model_file + ".bin")
 
-outfile = cut_txt('all.txt')
-model0,outmodel = model_train(outfile, 'jinyong')
+# outfile = cut_txt('all.txt')
+model0,outmodel = model_train('cut_wiki.txt', 'wiki2')
 model = gensim.models.KeyedVectors.load_word2vec_format(outmodel, binary=True)
+#model = word2vec.Word2Vec.load('维基百科语料/wiki.zh.text.model')
+#model.wv.save_word2vec_format('wiki' + ".bin", binary=True)  # 以二进制类型保存模型以便重用
+#model0 = gensim.models.KeyedVectors.load_word2vec_format('wiki.bin', binary=True)
 
-for i in model.most_similar(u"清朝"): #计算余弦距离最接近“滋润”的10个词
+for i in model0.most_similar(u"电话"): #计算余弦距离最接近“滋润”的10个词
     print(i[0],i[1])
