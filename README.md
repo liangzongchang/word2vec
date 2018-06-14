@@ -1,1 +1,1 @@
-# word2vec
+# KWS_for_lowpower_ic
